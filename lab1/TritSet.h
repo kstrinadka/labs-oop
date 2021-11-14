@@ -7,6 +7,7 @@
 
 
 #include <vector>
+#include <unordered_map>
 #include "Trit.h"
 
 namespace mylab1{
@@ -24,9 +25,6 @@ namespace mylab1{
 
         // попробую сюда несколько тритов записать
         int test_int_for_trits = 0;
-
-
-
 
 
         //
@@ -64,7 +62,7 @@ namespace mylab1{
 
             TritSet* proxy_triset;   //вроде это ссылка на тритсет с вектором с тритами
 
-            Trit trit;
+            //Trit trit;
 
             //преобразовать ссылку в номер трита
             // &vector[0] - _item = number_of_elements  (кол-во заполненных элементов вектора)
@@ -88,6 +86,8 @@ namespace mylab1{
 
             Refference& operator=(Trit trit);
 
+            Refference& operator=(TritSet::Refference new_trit);
+
             operator Trit() {
                 return proxy_triset->getTrit(_index);
             }
@@ -98,13 +98,6 @@ namespace mylab1{
         void print(int element_of_vector);
 
 
-        int GetVectorSize () {
-            return values.size();
-        }
-
-        int GetVectorElement (int element_of_vector) {
-            return values[element_of_vector];
-        }
 
         Trit get_trit_from_posision (int const &cell_in_vector, unsigned index) const;
 
@@ -117,6 +110,24 @@ namespace mylab1{
 
         TritSet operator&(const TritSet& other) const;
 
+        TritSet operator|(const TritSet& other) const;
+
+        TritSet operator~() const;
+
+        int getSize ();
+
+        //освобождение памяти до начального значения или до
+        // значения необходимого для хранения последнего установленного трита
+        void shrink();
+
+        //число установленных в данное значение тритов
+        size_t cardinality(Trit value);
+
+        //аналогично но сразу для всех типов тритов
+        std::unordered_map< Trit, int, std::hash<int> > cardinality();
+
+        // забыть содержимое от lastIndex и дальше
+        void trim(size_t lastIndex);
     };
 
     // перегрузка для вывода трита в std::cout

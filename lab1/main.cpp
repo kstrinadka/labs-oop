@@ -1,59 +1,66 @@
 //#include <iostream>
 #include "TritSet.h"
 
+void print_all_trits (mylab1::TritSet tritSet, int n) {
+    for (int i = 0; i < n; ++i) {
+        std::cout << "trit[" << i << "] = " << tritSet[i] << std::endl;
+    }
+}
+
+
 int main() {
     int test_int_for_trit = 0;
     mylab1::TritSet tritset(15);
-   // std::cout << "Size = " << tritset.GetVectorSize() << std::endl;
-   // std::cout  << "element = " << tritset.GetVectorElement(0) << std::endl;
-
-    tritset.setTrit(18, mylab1::TRUE);
-    //std::cout << "Size = " << tritset.GetVectorSize() << std::endl;
-    //std::cout  << "element = " << tritset.GetVectorElement(1) << std::endl;
-
-    //tritset.print(1);
-    //std::cout << std::endl << tritset.GetVectorElement(1) << std::endl;
-
-    tritset.setTrit(19, mylab1::FALSE);
-
-    //tritset.print(1);
 
 
-    /*mylab1::Trit trit = tritset.getTrit(18);
-    if (trit == mylab1::TRUE) {
-        std::cout << "TRUE" << std::endl;
-    } else
-    if (trit == mylab1::FALSE) {
-        std::cout << "FALSE" << std::endl;
-    } else
-    if (trit == mylab1::UNKNOWN) {
-        std::cout << "UNKNOWN" << std::endl;
-    } else {
-        std::cout << "shit" << std::endl;
-        std::cout << trit << std::endl;
+
+
+
+
+    //tritset.setTrit(18, mylab1::TRUE);
+
+
+    //tritset.setTrit(19, mylab1::FALSE);
+
+
+    /*for (int i = 0; i<512; ++i) {
+        tritset[i] = mylab1::TRUE;
     }
+    tritset[19] = mylab1::UNKNOWN;
+    tritset[29] = mylab1::UNKNOWN;
+    tritset[39] = mylab1::UNKNOWN;
+    tritset[49] = mylab1::UNKNOWN;
+    tritset[59] = mylab1::UNKNOWN;*/
 
-    mylab1::Trit trit2 = tritset.getTrit(19);
-    if (trit2 == mylab1::TRUE) {
-        std::cout << "TRUE" << std::endl;
-    } else
-    if (trit2 == mylab1::FALSE) {
-        std::cout << "FALSE" << std::endl;
-    } else
-    if (trit2 == mylab1::UNKNOWN) {
-        std::cout << "UNKNOWN" << std::endl;
-    } else {
-        std::cout << "shit" << std::endl;
-        std::cout << trit << std::endl;
-    }*/
 
-    tritset[18] = tritset[19];
-    //int n = mylab1::Trit::TRUE;
-    //int x = tritset[18];
+    tritset[19] = mylab1::UNKNOWN;
+    tritset[29] = mylab1::UNKNOWN;
+    tritset[39] = mylab1::UNKNOWN;
+    tritset[49] = mylab1::TRUE;
+    tritset[512] = mylab1::TRUE;
+    tritset[455] = mylab1::TRUE;
 
-    std::cout << (tritset[18])<< std::endl;
-    std::cout << tritset[19]<< std::endl;
-    std::cout << tritset[20]<< std::endl;
+    std::cout << tritset.getSize() << std::endl;
+
+    tritset.trim(450) ;
+
+    std::cout << tritset.getSize() << std::endl;
+
+    tritset.shrink();
+
+    std::cout << tritset.getSize() << std::endl;
+
+
+    //print_all_trits(tritset, 512);
+
+
+    //tritset[19] = mylab1::UNKNOWN;
+
+    //print_all_trits(tritset, 1000);
+
+
+
+
 
     return 0;
 }

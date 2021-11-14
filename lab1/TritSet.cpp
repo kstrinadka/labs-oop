@@ -8,6 +8,7 @@ namespace mylab1 {
     int INT_SIZE = 31;  // 0...31 - quantity of bits in integer
     int TRITS_PER_INT = 15;
 
+
     TritSet::TritSet(int count_of_trits) {
         //this->test_int_for_trits = 0;
         values.resize(count_of_trits/16 + 1); //выделяю нужное кол-во ячеек
@@ -110,11 +111,16 @@ namespace mylab1 {
 
 
     void TritSet::setTrit(size_t index, Trit trit) {
+        //запись UNKNOWN не должна приводить к выделению памяти
+        if (trit == UNKNOWN && values.size()*16 < index) {
+            return;
+        }
+
         unsigned current_element = index / 16;   //элементв в векторе
         unsigned current_trit = index % 16;    //трит в элементе
 
         //добавить элементов в вектор, если не хватает
-        if (values.size()*TRITS_PER_INT <= index) {
+        if (values.size()*16 <= index) {
             int n = this->values.size();
             values.resize(current_element + 1); //выделяю нужное кол-во ячеек
             for (int i=n; i<values.size(); ++i) {
@@ -122,17 +128,19 @@ namespace mylab1 {
             }
         }
 
-        if (values.size()*TRITS_PER_INT > index || trit != Trit::UNKNOWN) {
+        save_trit_to_posision(values[current_element], current_trit, trit);
+
+        /*if (values.size()*TRITS_PER_INT > index || trit != Trit::UNKNOWN) {
             // изменяем нужный трит на поступивший трит
-            save_trit_to_posision(values[current_element], current_trit, trit);
-        }
+
+        }*/
     }
 
     Trit TritSet::getTrit(size_t index) const {
         unsigned current_element = index / 16;   //элементв в векторе
         unsigned current_trit = index % 16;    //трит в элементе
 
-        if (values.size()*TRITS_PER_INT <= index) {
+        if (values.size()*16 <= index) {
             return UNKNOWN;
         }
 
@@ -164,12 +172,34 @@ namespace mylab1 {
         // создание нового тритсета нужного размера
         int new_size = other.values.size();
         if (this->values.size() >= other.values.size()) {
-            int new_size = this->values.size();
+            new_size = this->values.size();
         }
         TritSet newTritSet(new_size);
 
         for (int i = 0; i < new_size; i++){
             newTritSet[i] = (*this)[i] & other[i];
+        }
+        return newTritSet;
+    }
+
+    TritSet TritSet::operator|(const TritSet& other) const{
+        // создание нового тритсета нужного размера
+        int new_size = other.values.size();
+        if (this->values.size() >= other.values.size()) {
+            new_size = this->values.size();
+        }
+        TritSet newTritSet(new_size);
+
+        for (int i = 0; i < new_size; i++){
+            newTritSet[i] = (*this)[i] | other[i];
+        }
+        return newTritSet;
+    }
+
+    TritSet TritSet::operator~() const{
+        TritSet newTritSet(this->values.size());
+        for (int i = 0; i < this->values.size(); i++){
+            newTritSet[i] = ~(*this)[i];
         }
         return newTritSet;
     }
@@ -180,12 +210,72 @@ namespace mylab1 {
         return *this;
     }
 
+    int TritSet::getSize() {
+        return values.size()*16;
+    }
+
+    void TritSet::shrink() {
+
+        int size_of_new_vector = 0;
+
+        for (int i = (this->values.size() * 16) - 1; i >= 0; --i) {
+
+            if ((*this)[i] != UNKNOWN) {
+                // тут надо уменьшить вектор до нужного размера
+
+                /*std::cout << "trit[" << i << "] = " << (*this)[i] << std::endl;
+                std::cout << "trit[" << i+1 << "] = " << (*this)[i+1] << std::endl;
+                std::cout << "i = " << i << std::endl;*/
+                size_of_new_vector = (i / 16) + 1;      //типо выбираем нужное количество ячеек в векторе
+                break;
+            }
+
+        }
+
+        this->values.resize(size_of_new_vector);
+    }
+
+    size_t TritSet::cardinality(Trit value) {
+        int number = 0;
+        for (int i = 0; i < this->values.size()*16; ++i) {
+            if ((*this)[i] == value) {
+                number++;
+            }
+        }
+        return number;
+    }
+
+    std::unordered_map<Trit, int, std::hash<int> > TritSet::cardinality() {
+        std::unordered_map <Trit, int, std::hash<int> > my_map;
+        my_map[TRUE] = cardinality(TRUE);
+        my_map[FALSE] = cardinality(FALSE);
+        my_map[UNKNOWN] = cardinality(UNKNOWN);
+        return my_map;
+    }
+
+    void TritSet::trim(size_t lastIndex) {
+
+        this->values.resize((lastIndex)/16 + 1);
+
+        for (int i = lastIndex; i < this->values.size() * 16; ++i) {
+            (*this)[i] = UNKNOWN;
+        }
+    }
+
 
     TritSet::Refference &TritSet::Refference::operator=(Trit new_trit) {
 
-        std::cout << "operator = for trit with index:"<< _index << std::endl;
+        //std::cout << "operator = for trit with index:"<< _index << std::endl;
 
         proxy_triset->setTrit(_index, new_trit);
+        return *this;
+    }
+
+    TritSet::Refference &TritSet::Refference::operator=(TritSet::Refference new_trit) {
+
+        //std::cout << "operator = for trit with index:"<< _index << std::endl;
+        // достаю нужный трит из rvalue
+        proxy_triset->setTrit(_index, new_trit.proxy_triset->getTrit(new_trit._index));
         return *this;
     }
 
