@@ -6,11 +6,11 @@
 
 namespace mylab1 {
     int INT_SIZE = 31;  // 0...31 - quantity of bits in integer
-    int TRITS_PER_INT = 15;
+    int TRITS_PER_INT = 16;
 
 
     TritSet::TritSet(int count_of_trits) {
-        //this->test_int_for_trits = 0;
+
         values.resize(count_of_trits/16 + 1); //выделяю нужное кол-во ячеек
         for (int i=0; i<values.size(); ++i) {
             values[i] = 0;
@@ -105,7 +105,7 @@ namespace mylab1 {
         unsigned mask = 0;
         mask |= (1 << FIRST_TRIT_PLACE);
         mask |= (1 << SECOND_TRIT_PLACE);
-        //std::cout << std::endl << "mask = " << mask << std::endl;
+
         return mask;
     }
 
@@ -130,10 +130,6 @@ namespace mylab1 {
 
         save_trit_to_posision(values[current_element], current_trit, trit);
 
-        /*if (values.size()*TRITS_PER_INT > index || trit != Trit::UNKNOWN) {
-            // изменяем нужный трит на поступивший трит
-
-        }*/
     }
 
     Trit TritSet::getTrit(size_t index) const {
@@ -154,7 +150,7 @@ namespace mylab1 {
         unsigned mask = mask_for_trit(current_trit); //создаем маску под нужный трит
         unsigned shift = 32 - 2*current_trit - 2;
         uint32_t trit_value = ((uint32_t) cell_in_vector & mask) >> shift;
-        //std::cout << std::endl << "trit_value = " << trit_value << std::endl;
+
         Trit trit = (Trit)trit_value;
         return trit;
     }
@@ -223,9 +219,6 @@ namespace mylab1 {
             if ((*this)[i] != UNKNOWN) {
                 // тут надо уменьшить вектор до нужного размера
 
-                /*std::cout << "trit[" << i << "] = " << (*this)[i] << std::endl;
-                std::cout << "trit[" << i+1 << "] = " << (*this)[i+1] << std::endl;
-                std::cout << "i = " << i << std::endl;*/
                 size_of_new_vector = (i / 16) + 1;      //типо выбираем нужное количество ячеек в векторе
                 break;
             }

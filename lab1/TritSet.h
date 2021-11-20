@@ -20,24 +20,15 @@ namespace mylab1{
         // в каждом элементе вектора хранится по 16 тритов
         std::vector<int> values;
 
-        //кол-во тритов
-        //int trit_number;
-
-        // попробую сюда несколько тритов записать
-        int test_int_for_trits = 0;
-
 
         //
         void trit_to_array(int* trit_array, Trit trit);
-
 
 
         //
         void save_trit_to_posision(int &cell_in_vector,
                                    unsigned current_trit, Trit trit);
 
-        //
-        int GetRightElement (int trit_number);
 
         //занулить все биты, кроме нужного трита
         unsigned mask_for_trit(unsigned index) const;
@@ -52,25 +43,10 @@ namespace mylab1{
 
         class Refference {
         private:
-            // указатель на нужный int в TritSet
-            //int& _item;
-
-            // номер трита в инте
-            //int _number;
 
             size_t _index;    // индекс трита
 
             TritSet* proxy_triset;   //вроде это ссылка на тритсет с вектором с тритами
-
-            //Trit trit;
-
-            //преобразовать ссылку в номер трита
-            // &vector[0] - _item = number_of_elements  (кол-во заполненных элементов вектора)
-            // number_of_elements = vector.size()
-            //number_of_elements + _number = trit_number
-
-
-
 
 
         public:
