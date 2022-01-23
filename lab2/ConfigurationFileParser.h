@@ -20,17 +20,26 @@
 
 
 
-
 namespace lab2 {
 
-    enum class operations{read, write, grep, replace, dump, sort};
+
 
 
 // здесь читается входящий файл и разбирается на блоки
     class ConfigurationFileParser {
     private:
+        enum class operations{read, write, grep, replace, dump, sort};
 
-        operations operation;
+        std::unordered_map<std::string, operations>getOperation =
+                {
+                        {"writefile", operations::write},
+                        {"readfile", operations::read},
+                        {"grep", operations::grep},
+                        {"sort", operations::sort},
+                        {"dump", operations::dump},
+                        {"replace", operations::replace}
+                };
+
 
         // name of input file
         const std::string file_name;
@@ -78,12 +87,19 @@ namespace lab2 {
 
         void read_file();
 
+        void check_name_of_block(std::string operationName);
+
+        void check_number_of_block(std::string word);
+
+
+
 
 
     public:
 
         //получаем имя workflow.txt
-        explicit ConfigurationFileParser(std::string file_name): file_name(std::move(file_name)) {
+        explicit ConfigurationFileParser(std::string file_name):
+        file_name(std::move(file_name)){
         }
 
         //ненужная функция
@@ -109,9 +125,7 @@ namespace lab2 {
 
         void print_map_for_blocks ();
 
-
     };
-
 
 
 

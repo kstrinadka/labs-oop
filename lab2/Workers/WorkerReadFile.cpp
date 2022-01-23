@@ -9,6 +9,8 @@
 
 namespace lab2 {
 
+    const int right_number_of_arguments = 2;
+
 
     //будем тут обрабатывать поступивший текст
     ////argument[0] - название блока
@@ -23,7 +25,7 @@ namespace lab2 {
         text_is_exist = true;
 
         //проверка на нужное кол-во аргументов
-        if (arguments.size() != 2)
+        if (arguments.size() != right_number_of_arguments)
         {
             const int line = 1;
             throw InvalidArgumentAmmount(line, arguments.size(), 1);

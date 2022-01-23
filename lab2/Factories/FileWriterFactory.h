@@ -20,8 +20,6 @@ namespace lab2 {
 
         Worker* FactoryMethod(std::vector<std::string> &arguments) const override;
 
-
-
     };
 
 

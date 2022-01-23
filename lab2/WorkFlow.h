@@ -10,17 +10,10 @@
 #include <iostream>
 #include <map>
 #include "Workers/Worker.h"
-#include "Factories/WorkerFactory.h"
-#include "Factories/FileReaderFactory.h"
-#include "Factories/FileWriterFactory.h"
-#include "Factories/GrepFactory.h"
-#include "Factories/SortFactory.h"
-#include "Factories/ReplaceFactory.h"
-#include "Factories/DumpFactory.h"
+#include "Factories/MapFactory.h"
 
 
 namespace lab2 {
-
 
 
     class WorkFlow {
@@ -40,6 +33,8 @@ namespace lab2 {
 
         //выбирает нужную фабрику по имени (создаем блок по его имени)
         lab2::Worker* create_block_from_name(std::vector<std::string> arguments);
+
+        MapFactory factories;
 
 
     public:

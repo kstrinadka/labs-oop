@@ -7,9 +7,13 @@
 namespace lab2 {
 
     int is_int(std::string word) {
+        const char zero = '0';
+        const char nine = '9';
+
+
         for (int i=0, n = word.size(); i<n; i++)
         {
-            if (word[i] < '0' || word[i] > '9') return false;
+            if (word[i] < zero || word[i] > nine) return false;
         }
         return true;
     }
@@ -36,30 +40,12 @@ namespace lab2 {
         fin.open(this->file_name);
 
         if(!fin.is_open()) {
-            std::cout<<"wrong arguments \n";
             throw InvalidFileName(file_name);
-            //throw std::exception();         // исключение обрабатывается в main.cpp
         }
     }
 
-    void ConfigurationFileParser::write_file() {
 
-        std::ofstream fout;
 
-        fout.open("out.txt");
-
-        for (int i = 0; i<lines_of_opened_file.size(); ++i){
-            fout << lines_of_opened_file[i] << "\n";
-        }
-
-        fout.close();
-    }
-
-    void ConfigurationFileParser::print_input_lines() {
-        for (int i=0; i<lines_of_opened_file.size(); ++i) {
-            std::cout << lines_of_opened_file[i] << std::endl;
-        }
-    }
 
     void ConfigurationFileParser::parse() {
         read_file();
@@ -76,27 +62,25 @@ namespace lab2 {
         }
     }
 
-    void ConfigurationFileParser::print_strings_with_blocks() {
-        this->find_strings_with_blocks();
-        for (int i = 0; i < this->vector_of_blocks.size(); ++i) {
-            std::cout << this->vector_of_blocks[i] << std::endl;
-        }
-    }
+
 
     void ConfigurationFileParser::create_chain_of_nodes() {
-        std::string stroka = lines_of_opened_file[find_csed_index_line() + 1];
+        int number_of_string_with_chain_of_nodes = find_csed_index_line() + 1;
+
+        std::string stroka = lines_of_opened_file[number_of_string_with_chain_of_nodes];
 
         std::stringstream stringstream;        //Создание потоковой переменной
         stringstream << stroka;                //Перенос строки в поток
         std::string word;
 
-        int index = 0;
         bool afterNumber = false;
+        const std::string arrow = "->";
 
         //проверка цепи узлов на правильность и создание цепи
         while (stringstream >> word) {
-            if (word != "->")
+            if (word != arrow)
             {
+
                 if(afterNumber)
                 {
                     throw InvalidArrow(file_name, word);
@@ -134,9 +118,10 @@ namespace lab2 {
     }
 
     int ConfigurationFileParser::find_csed_index_line() {
+        const std::string csed = "csed";
         int n = 0;
         for (int i = 0; i < this->lines_of_opened_file.size(); ++i) {
-            if (this->lines_of_opened_file[i].find("csed") != std::string::npos) {
+            if (this->lines_of_opened_file[i].find(csed) != std::string::npos) {
                 n = i;
                 break;
             }
@@ -146,14 +131,7 @@ namespace lab2 {
         return n;
     }
 
-    void ConfigurationFileParser::print_chain_of_nodes() {
-        create_chain_of_nodes();
 
-        std::cout << std::endl << "Created chain:" << std::endl;
-        for (int i=0; i<chain_of_nodes.size(); i++) {
-            std::cout << chain_of_nodes[i] << std::endl;
-        }
-    }
 
     void ConfigurationFileParser::create_blocks() {
 
@@ -172,18 +150,20 @@ namespace lab2 {
             std::stringstream stringstream;        //Создание потоковой переменной
             stringstream << s;                //Перенос строки в поток
             std::string word;
+            const std::string equal_sign = "=";
+            const std::string space = " ";
 
             int key = 0;
             std::string stroka = "";
             while (stringstream >> word) {
                 if (is_int(word)) {
                     key = stoi(word);
-                } else if (word == "=") {
+                } else if (word == equal_sign) {
                     ;
                 }
                 else {
                     stroka += word;
-                    stroka += " ";
+                    stroka += space;
                 }
             }
 
@@ -193,20 +173,7 @@ namespace lab2 {
 
     }
 
-    void ConfigurationFileParser::print_vector_of_blocks() {
-        for (auto& s : vector_of_blocks) {
-            std::cout << s << std::endl;
-        }
-    }
 
-    void ConfigurationFileParser::print_map() {
-
-        for (auto it = map_prepared.begin(); it != map_prepared.end(); ++it)
-        {
-            std::cout << it->first << " : " << it->second << std::endl;
-        }
-
-    }
 
     std::vector<int> &ConfigurationFileParser::Getchain_of_nodes() {
         return this->chain_of_nodes;
@@ -238,45 +205,34 @@ namespace lab2 {
         }
     }
 
-    void ConfigurationFileParser::print_map_for_blocks() {
-        std::cout << std::endl << "Parsed map_for_blocks:" << std::endl;
-        for (auto it = map_for_blocks.begin(); it != map_for_blocks.end(); ++it)
-        {
-            std::cout << it->first << " : ";
-            for (auto v = it->second.begin(); v != it->second.end(); ++v)
-            {
-                std::cout << *v << "\t";
-            }
-            std::cout << std::endl;
-        }
-        std::cout <<std::endl;
-    }
 
     bool ConfigurationFileParser::HasCorrectDescription() {
 
         bool foundStart = false;
         bool foundEnd = false;
+        const std::string desc = "desc";
+        const std::string csed = "csed";
 
         //проверяем desc и csed
         for (auto& currentLine : lines_of_opened_file) {
-            if(currentLine == "desc" && foundStart == false)
+            if(currentLine == desc && foundStart == false)
             {
                 foundStart = true;
             }
             else
             {
-                if (currentLine == "desc")
+                if (currentLine == desc)
                 {
                     return false;
                 }
             }
-            if(currentLine == "csed" && foundStart == true && foundEnd == false)
+            if(currentLine == csed && foundStart == true && foundEnd == false)
             {
                 foundEnd = true;
             }
             else
             {
-                if(currentLine == "csed")
+                if(currentLine == csed)
                 {
                     return false;
                 }
@@ -290,63 +246,73 @@ namespace lab2 {
 
     void ConfigurationFileParser::CheckBlocks() {
         //Проверка блоков на правильность (вынести в отдельную функцию)
+        int descLine = 1;   //номер блока
+        const std::string equal_sign = "=";
+
         for (auto& s : vector_of_blocks) {
+
             std::stringstream stringstream;
             stringstream << s;
             std::string word;
             stringstream >> word;
-            int key = -1;
-            int descLine = 1;   //номер блока
 
-            try
-            {
-                key = std::stoi(word);
-            }
-            catch(std::exception&)
-            {
-                std::stringstream ss;
-                ss << key;
-                std::string str = ss.str();
-                throw InvalidNumber(file_name, str);
-            }
-            if(key <= 0)
-            {
-                std::stringstream ss;
-                ss << key;
-                std::string str = ss.str();
-                throw InvalidNumber(file_name, str);
-            }
+
+            check_number_of_block(word);
 
             std::string assignment;
             stringstream >> assignment;
-            if(assignment != "=")
+
+
+
+
+            if(assignment != equal_sign)
             {
                 throw InvalidAssignmentSign(descLine, assignment);
             }
 
-            std::unordered_map<std::string, operations>getOperation
-                    {
-                            {"writefile", operations::write},
-                            {"readfile", operations::read},
-                            {"grep", operations::grep},
-                            {"sort", operations::sort},
-                            {"dump", operations::dump},
-                            {"replace", operations::replace}
-                    };
+
             std::string operationName;
             stringstream >> operationName;
-            try
-            {
-                operation = getOperation.at(operationName);
-            }
-            catch(std::out_of_range&)
-            {
-                throw InvalidOperationName(file_name, operationName);
-            }
+
+            check_name_of_block(operationName);
 
             descLine++;
         }
     }
+
+    void ConfigurationFileParser::check_name_of_block(std::string operationName) {
+        try
+        {
+            getOperation.at(operationName);
+        }
+        catch(std::out_of_range&)
+        {
+            throw InvalidOperationName(file_name, operationName);
+        }
+    }
+
+    void ConfigurationFileParser::check_number_of_block(std::string word) {
+        int key = -1;
+        try
+        {
+            key = std::stoi(word);
+        }
+        catch(std::exception&)
+        {
+            std::stringstream ss;
+            ss << key;
+            std::string str = ss.str();
+            throw InvalidNumber(file_name, str);
+        }
+        if(key <= 0)
+        {
+            std::stringstream ss;
+            ss << key;
+            std::string str = ss.str();
+            throw InvalidNumber(file_name, str);
+        }
+    }
+
 
 }
 
